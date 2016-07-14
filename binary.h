@@ -81,4 +81,92 @@ static std::string readString(std::vector<uint8_t>& msg, int *off, int size)
 	return std::string(msg.begin() + (*off), msg.begin() + (*off) + size); (*off) += size; 
 }
 
+static void writeInt32(std::vector<uint8_t>* msg, int32_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeInt16(std::vector<uint8_t>* msg, int16_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeInt8(std::vector<uint8_t>* msg, int8_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeUInt32(std::vector<uint8_t>* msg, uint32_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeUInt16(std::vector<uint8_t>* msg, uint16_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeUInt8(std::vector<uint8_t>* msg, uint8_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeFloat(std::vector<uint8_t>* msg, float_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writDouble(std::vector<uint8_t>* msg, double_t value)
+{
+	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+
+	for (std::size_t i = 0; i != sizeof(value); ++i)
+	{
+		(*msg).push_back(array[i]);
+	}
+}
+
+static void writeString(std::vector<uint8_t>* msg, std::string value)
+{
+	for (int i = 0; i < value.size(); i++)
+	{
+		(*msg).push_back(value[i]);
+	}
+}
+
 #endif // BINARY_H_
