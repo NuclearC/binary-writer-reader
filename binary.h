@@ -151,7 +151,7 @@ static void writeFloat(std::vector<uint8_t>* msg, float_t value)
 	}
 }
 
-static void writDouble(std::vector<uint8_t>* msg, double_t value)
+static void writeDouble(std::vector<uint8_t>* msg, double_t value)
 {
 	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
 
