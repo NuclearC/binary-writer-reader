@@ -10,6 +10,8 @@
 
 #ifndef BINARY_H_
 #define BINARY_H_
+#include <cstdint>
+#include <cstring>
 #include <vector>
 
 static int32_t readInt32(std::vector<uint8_t>& msg, int *off)
@@ -60,18 +62,18 @@ static uint8_t readUInt8(std::vector<uint8_t>& msg, int *off)
 	return result;
 }
 
-static double_t readDouble(std::vector<uint8_t>& msg, int *off)
+static double readDouble(std::vector<uint8_t>& msg, int *off)
 {
 	if ((*off) > msg.size()) return 0;
-	double_t result; int size = sizeof (result);
+	double result; int size = sizeof (result);
 	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
 	return result;
 }
 
-static float_t readFloat(std::vector<uint8_t>& msg, int *off)
+static float readFloat(std::vector<uint8_t>& msg, int *off)
 {
 	if ((*off) > msg.size()) return 0;
-	float_t result; int size = sizeof(result);
+	float result; int size = sizeof(result);
 	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
 	return result;
 }
@@ -141,7 +143,7 @@ static void writeUInt8(std::vector<uint8_t>* msg, uint8_t value)
 	}
 }
 
-static void writeFloat(std::vector<uint8_t>* msg, float_t value)
+static void writeFloat(std::vector<uint8_t>* msg, float value)
 {
 	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
 
@@ -151,7 +153,7 @@ static void writeFloat(std::vector<uint8_t>* msg, float_t value)
 	}
 }
 
-static void writeDouble(std::vector<uint8_t>* msg, double_t value)
+static void writeDouble(std::vector<uint8_t>* msg, double value)
 {
 	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
 
