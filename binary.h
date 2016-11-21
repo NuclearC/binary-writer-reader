@@ -10,165 +10,124 @@
 
 #ifndef BINARY_H_
 #define BINARY_H_
-#include <cstdint>
-#include <cstring>
 #include <vector>
+#include <cstring>
+#include <cstdint>
 
-static int32_t readInt32(std::vector<uint8_t>& msg, int *off)
+template<typename _T>
+static void writeToVector(std::vector<char>& _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
 {
-	if ((*off) > msg.size()) return 0;
-	int32_t result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
+	unsigned long long size = sizeof(_T);
+	unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
 
-static int16_t readInt16(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	int16_t result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static int8_t readInt8(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	int8_t result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static uint32_t readUInt32(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	uint32_t result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static uint16_t readUInt16(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	uint16_t result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static uint8_t readUInt8(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	uint8_t result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static double readDouble(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	double result; int size = sizeof (result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static float readFloat(std::vector<uint8_t>& msg, int *off)
-{
-	if ((*off) > msg.size()) return 0;
-	float result; int size = sizeof(result);
-	memcpy(&result, msg.data() + (*off), size); (*off) += size; 
-	return result;
-}
-
-static std::string readString(std::vector<uint8_t>& msg, int *off, int size)
-{
-	return std::string(msg.begin() + (*off), msg.begin() + (*off) + size); (*off) += size; 
-}
-
-static void writeInt32(std::vector<uint8_t>* msg, int32_t value)
-{
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
-
-	for (std::size_t i = 0; i != sizeof(value); ++i)
+	for (unsigned long i = 0; i < size; i++)
 	{
-		(*msg).push_back(array[i]);
+		_Buffer[_Offset] = (array[i]);
+		_Offset++;
 	}
 }
 
-static void writeInt16(std::vector<uint8_t>* msg, int16_t value)
+template<typename _T>
+static void writeToVector(std::vector<unsigned char>& _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
 {
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+	unsigned long long size = sizeof(_T);
+	unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
 
-	for (std::size_t i = 0; i != sizeof(value); ++i)
+	for (unsigned long i = 0; i < size; i++)
 	{
-		(*msg).push_back(array[i]);
+		_Buffer[_Offset] = (array[i]);
+		_Offset++;
 	}
 }
 
-static void writeInt8(std::vector<uint8_t>* msg, int8_t value)
+template<typename _T>
+static void writeToBuffer(char* _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
 {
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+	unsigned long long size = sizeof(_T);
+	unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
 
-	for (std::size_t i = 0; i != sizeof(value); ++i)
+	for (unsigned long i = 0; i < size; i++)
 	{
-		(*msg).push_back(array[i]);
+		*(_Buffer + _Offset + i) = (char)array[i];
 	}
+
+	_Offset += size;
 }
 
-static void writeUInt32(std::vector<uint8_t>* msg, uint32_t value)
+template<typename _T>
+static _T readFromBuffer(const char* _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true)
 {
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
+	_T _Result = 0;
+	unsigned long long size = sizeof(_T);
+	if (size + _Offset > _Size)
+		return _Result;
 
-	for (std::size_t i = 0; i != sizeof(value); ++i)
-	{
-		(*msg).push_back(array[i]);
-	}
+	memcpy(&_Result, _Buffer + _Offset, size);
+	_Offset += size;
+	return _Result;
 }
 
-static void writeUInt16(std::vector<uint8_t>* msg, uint16_t value)
-{
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
-
-	for (std::size_t i = 0; i != sizeof(value); ++i)
-	{
-		(*msg).push_back(array[i]);
-	}
+static int readInt32(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<int>(_Buffer, _Size, _Offset, _Le);
 }
 
-static void writeUInt8(std::vector<uint8_t>* msg, uint8_t value)
-{
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
-
-	for (std::size_t i = 0; i != sizeof(value); ++i)
-	{
-		(*msg).push_back(array[i]);
-	}
+static short int readInt16(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<short>(_Buffer, _Size, _Offset, _Le);
 }
 
-static void writeFloat(std::vector<uint8_t>* msg, float value)
-{
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
-
-	for (std::size_t i = 0; i != sizeof(value); ++i)
-	{
-		(*msg).push_back(array[i]);
-	}
+static char readInt8(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<char>(_Buffer, _Size, _Offset, _Le);
 }
 
-static void writeDouble(std::vector<uint8_t>* msg, double value)
-{
-	uint8_t const * array = reinterpret_cast<uint8_t const *>(&value);
-
-	for (std::size_t i = 0; i != sizeof(value); ++i)
-	{
-		(*msg).push_back(array[i]);
-	}
+static unsigned int readUint32(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<unsigned int>(_Buffer, _Size, _Offset, _Le);
 }
 
-static void writeString(std::vector<uint8_t>* msg, std::string value)
-{
-	for (int i = 0; i < value.size(); i++)
-	{
-		(*msg).push_back(value[i]);
-	}
+static unsigned short int readUint16(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<unsigned short>(_Buffer, _Size, _Offset, _Le);
 }
 
+static unsigned char readUint8(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<unsigned char>(_Buffer, _Size, _Offset, _Le);
+}
+
+static float readFloat(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<float>(_Buffer, _Size, _Offset, _Le);
+}
+
+static double readDouble(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
+	return readFromBuffer<double>(_Buffer, _Size, _Offset, _Le);
+}
+
+static void writeInt32(char* _Buffer, unsigned long long& _Offset, const int& _Val, bool _Le = true) {
+	return writeToBuffer<int>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeInt16(char* _Buffer, unsigned long long& _Offset, const short& _Val, bool _Le = true) {
+	return writeToBuffer<short>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeInt8(char* _Buffer, unsigned long long& _Offset, const char& _Val, bool _Le = true) {
+	return writeToBuffer<char>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeUint32(char* _Buffer, unsigned long long& _Offset, const unsigned int& _Val, bool _Le = true) {
+	return writeToBuffer<unsigned int>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeUint16(char* _Buffer, unsigned long long& _Offset, const unsigned short& _Val, bool _Le = true) {
+	return writeToBuffer<unsigned short>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeUint8(char* _Buffer, unsigned long long& _Offset, const unsigned char& _Val, bool _Le = true) {
+	return writeToBuffer<unsigned char>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeFloat(char* _Buffer, unsigned long long& _Offset, const float& _Val, bool _Le = true) {
+	return writeToBuffer<float>(_Buffer, _Offset, _Val, _Le);
+}
+
+static void writeDouble(char* _Buffer, unsigned long long& _Offset, const double& _Val, bool _Le = true) {
+	return writeToBuffer<double>(_Buffer, _Offset, _Val, _Le);
+}
 #endif // BINARY_H_
