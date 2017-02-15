@@ -7,6 +7,9 @@
 
 #ifndef NC_BINARY_H_
 #define NC_BINARY_H_
+
+#if defined __cplusplus
+
 #include <vector>
 
 template<typename _T>
@@ -34,6 +37,8 @@ static void writeToVector(std::vector<unsigned char>& _Buffer, unsigned long lon
 		_Offset++;
 	}
 }
+
+#endif
 
 template<typename _T>
 static void writeToBuffer(char* _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
