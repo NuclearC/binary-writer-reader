@@ -1,17 +1,51 @@
 # binary-writer-reader
 Binary Reader/Writer for C/C++
 
-#### Usage
+## Usage
+#### Example for char[]/unsigned char[] buffers
 ```C++
 #include "binary.h"
 ...
 
-std::vector<uint8_t> buffer;
+char buf[256]; // our buffer
 
-writeInt32(&buffer, 240);
-writeFloat(&buffer, 9.801f);
+unsigned long long offset = 0;
 
-int offset = 0;
-int _int32 = readInt32(buffer, &offset); // now offset += size of int
-float _float = readFloat(buffer, &offset); // now offset += size of float
+// Writing
+writeDouble(buf, offset, 3.14);
+writeInt32(buf, offset, 20030319);
+writeFloat(buf, offset, 9.8f);
+
+offset = 0;
+
+// Reading
+double my_awesome_pi = readDouble(buf, sizeof(buf), offset);
+int my_awesome_int = readInt32(buf, sizeof(buf), offset);
+float my_float_awesomee = readFloat(buf, sizeof(buf), offset);
+
+```
+#### Example of std::vector's
+```C++
+#include <vector>
+
+#include "binary.h"
+
+int main() {
+    std::vector<char> my_buf;
+
+    // Writing
+    my_buf.insert(my_buf.end(), 16, 0);
+
+    unsigned long long off = 0;
+    writeDouble(&my_buf[0], off, 3.0 / 2.0);
+    // Or
+    writeToVector<double>(my_buf, off, 3.14);
+
+    off = 0;
+    // Reading
+    double my_var = readDouble(my_buf.data(), my_buf.size(), off);
+    double my_var2 = readDouble(my_buf.data(), my_buf.size(), off);
+
+    return 0;
+}
 ```
