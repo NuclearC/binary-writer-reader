@@ -37,7 +37,6 @@ static void writeToVector(std::vector<unsigned char>& _Buffer, unsigned long lon
 		_Offset++;
 	}
 }
-
 #endif
 
 template<typename _T>
@@ -52,6 +51,30 @@ static void writeToBuffer(char* _Buffer, unsigned long long& _Offset, const _T& 
 	}
 
 	_Offset += size;
+}
+
+template<typename _T>
+static void writeToBuffer(char* _Buffer, const unsigned long long& _Offset, const _T& _Val, bool _Le = true)
+{
+    unsigned long long size = sizeof(_T);
+    unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
+
+    for (unsigned long i = 0; i < size; i++)
+    {
+        *(_Buffer + _Offset + i) = (char)array[i];
+    }
+}
+
+template<typename _T>
+static void writeToBuffer(unsigned char* _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
+{
+    return writeToBuffer((char*)_Buffer, _Offset, _Val, _Le);
+}
+
+template<typename _T>
+static void writeToBuffer(unsigned char* _Buffer, const unsigned long long& _Offset, const _T& _Val, bool _Le = true)
+{
+    return writeToBuffer((char*)_Buffer, _Offset, _Val, _Le);
 }
 
 template<typename _T>
@@ -76,7 +99,14 @@ static _T readFromBuffer(const char* _Buffer, const unsigned long long& _Size, c
         return _Result;
 
     memcpy(&_Result, _Buffer + _Offset, size);
-    return _Result;
+    return
+        _Result;
+}
+
+template<typename _T>
+static _T readFromBuffer(const unsigned char* _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true)
+{
+    return readFromBuffer((const char*)_Buffer, _Size, _Offset, _Le);
 }
 
 template<typename _T>
