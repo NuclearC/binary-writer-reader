@@ -106,13 +106,13 @@ static _T readFromBuffer(const char* _Buffer, const unsigned long long& _Size, c
 template<typename _T>
 static _T readFromBuffer(const unsigned char* _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true)
 {
-    return readFromBuffer((const char*)_Buffer, _Size, _Offset, _Le);
+    return readFromBuffer<_T>((const char*)_Buffer, _Size, _Offset, _Le);
 }
 
 template<typename _T>
 static _T readFromBuffer(const unsigned char* _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true)
 {
-    return readFromBuffer((const char*)_Buffer, _Size, _Offset, _Le);
+    return readFromBuffer<_T>((const char*)_Buffer, _Size, _Offset, _Le);
 }
 
 static int readInt32(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
