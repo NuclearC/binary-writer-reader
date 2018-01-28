@@ -8,207 +8,177 @@
 #ifndef NC_BINARY_H_
 #define NC_BINARY_H_
 
-#if defined __cplusplus
-
-#include <vector>
-
-template<typename _T>
-static void writeToVector(std::vector<char>& _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
-{
-	unsigned long long size = sizeof(_T);
-	unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
-
-	for (unsigned long i = 0; i < size; i++)
-	{
-		_Buffer[_Offset] = (array[i]);
-		_Offset++;
-	}
-}
-
-template<typename _T>
-static void writeToVector(std::vector<unsigned char>& _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
-{
-	unsigned long long size = sizeof(_T);
-	unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
-
-	for (unsigned long i = 0; i < size; i++)
-	{
-		_Buffer[_Offset] = (array[i]);
-		_Offset++;
-	}
-}
-#endif
-
-template<typename _T>
-static void writeToBuffer(char* _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
-{
-	unsigned long long size = sizeof(_T);
-	unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
-
-	for (unsigned long i = 0; i < size; i++)
-	{
-		*(_Buffer + _Offset + i) = (char)array[i];
-	}
-
-	_Offset += size;
-}
-
-template<typename _T>
-static void writeToBuffer(char* _Buffer, const unsigned long long& _Offset, const _T& _Val, bool _Le = true)
-{
-    unsigned long long size = sizeof(_T);
-    unsigned const char * array = reinterpret_cast<unsigned const char *>(&_Val);
-
-    for (unsigned long i = 0; i < size; i++)
-    {
-        *(_Buffer + _Offset + i) = (char)array[i];
+template <typename T>
+void write_buffer(char* buf, size_t len, T value, size_t& offset) {
+    auto size = sizeof(T);
+    if (offset + size > len) {
+        throw "out of range";
     }
+    memcpy(buf + offset, &value, size);
+    offset += size;
 }
 
-template<typename _T>
-static void writeToBuffer(unsigned char* _Buffer, unsigned long long& _Offset, const _T& _Val, bool _Le = true)
-{
-    return writeToBuffer((char*)_Buffer, _Offset, _Val, _Le);
+template <typename T>
+void write_buffer(char* buf, size_t len, T value, const size_t& offset = 0) {
+    auto size = sizeof(T);
+    if (offset + size > len) {
+        throw "out of range";
+    }
+    memcpy(buf + offset, &value, size);
 }
 
-template<typename _T>
-static void writeToBuffer(unsigned char* _Buffer, const unsigned long long& _Offset, const _T& _Val, bool _Le = true)
-{
-    return writeToBuffer((char*)_Buffer, _Offset, _Val, _Le);
+template <typename T>
+T read_buffer(const char* buf, size_t len, size_t& offset) {
+    auto size = sizeof(T);
+    if (offset + size > len) {
+        throw "out of range";
+    }
+    T res = {};
+    memcpy(&res, buf + offset, size);
+    offset += size;
+    return res;
 }
 
-template<typename _T>
-static _T readFromBuffer(const char* _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true)
-{
-	_T _Result = 0;
-	unsigned long long size = sizeof(_T);
-	if (size + _Offset > _Size)
-		return _Result;
 
-	memcpy(&_Result, _Buffer + _Offset, size);
-	_Offset += size;
-	return _Result;
+template <typename T>
+T read_buffer(const char* buf, size_t len, const size_t& offset = 0) {
+    auto size = sizeof(T);
+    if (offset + size > len) {
+        throw "out of range";
+    }
+    T res = {};
+    memcpy(&res, buf + offset, size);
+    return res;
 }
 
-template<typename _T>
-static _T readFromBuffer(const char* _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true)
-{
-    _T _Result = 0;
-    unsigned long long size = sizeof(_T);
-    if (size + _Offset > _Size)
-        return _Result;
-
-    memcpy(&_Result, _Buffer + _Offset, size);
-    return
-        _Result;
+void write_int8(char* buf, size_t len, int8_t value, const size_t offset) {
+    return write_buffer<int8_t>(buf, len, value, offset);
+}
+void write_int8(char* buf, size_t len, int8_t value, size_t& offset) {
+    return write_buffer<int8_t>(buf, len, value, offset);
+}
+void write_uint8(char* buf, size_t len, uint8_t value, const size_t offset) {
+    return write_buffer<uint8_t>(buf, len, value, offset);
+}
+void write_uint8(char* buf, size_t len, uint8_t value, size_t& offset) {
+    return write_buffer<uint8_t>(buf, len, value, offset);
 }
 
-template<typename _T>
-static _T readFromBuffer(const unsigned char* _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true)
-{
-    return readFromBuffer<_T>((const char*)_Buffer, _Size, _Offset, _Le);
+void write_int16(char* buf, size_t len, int16_t value, const size_t offset) {
+    return write_buffer<int16_t>(buf, len, value, offset);
+}
+void write_int16(char* buf, size_t len, int16_t value, size_t& offset) {
+    return write_buffer<int16_t>(buf, len, value, offset);
+}
+void write_uint16(char* buf, size_t len, uint16_t value, const size_t offset) {
+    return write_buffer<uint16_t>(buf, len, value, offset);
+}
+void write_uint16(char* buf, size_t len, uint16_t value, size_t& offset) {
+    return write_buffer<uint16_t>(buf, len, value, offset);
 }
 
-template<typename _T>
-static _T readFromBuffer(const unsigned char* _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true)
-{
-    return readFromBuffer<_T>((const char*)_Buffer, _Size, _Offset, _Le);
+void write_int32(char* buf, size_t len, int32_t value, const size_t offset) {
+    return write_buffer<int32_t>(buf, len, value, offset);
+}
+void write_int32(char* buf, size_t len, int32_t value, size_t& offset) {
+    return write_buffer<int32_t>(buf, len, value, offset);
+}
+void write_uint32(char* buf, size_t len, uint32_t value, const size_t offset) {
+    return write_buffer<uint32_t>(buf, len, value, offset);
+}
+void write_uint32(char* buf, size_t len, uint32_t value, size_t& offset) {
+    return write_buffer<uint32_t>(buf, len, value, offset);
 }
 
-static int readInt32(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<int>(_Buffer, _Size, _Offset, _Le);
+void write_int64(char* buf, size_t len, int64_t value, const size_t offset) {
+    return write_buffer<int64_t>(buf, len, value, offset);
+}
+void write_int64(char* buf, size_t len, int64_t value, size_t& offset) {
+    return write_buffer<int64_t>(buf, len, value, offset);
+}
+void write_uint64(char* buf, size_t len, uint64_t value, const size_t offset) {
+    return write_buffer<uint64_t>(buf, len, value, offset);
+}
+void write_uint64(char* buf, size_t len, uint64_t value, size_t& offset) {
+    return write_buffer<uint64_t>(buf, len, value, offset);
 }
 
-static int readInt32(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<int>(_Buffer, _Size, _Offset, _Le);
+void write_float(char* buf, size_t len, float_t value, const size_t offset) {
+    return write_buffer<float_t>(buf, len, value, offset);
+}
+void write_double(char* buf, size_t len, double_t value, const size_t offset) {
+    return write_buffer<double_t>(buf, len, value, offset);
+}
+void write_float(char* buf, size_t len, float_t value, size_t& offset) {
+    return write_buffer<float_t>(buf, len, value, offset);
+}
+void write_double(char* buf, size_t len, double_t value, size_t& offset) {
+    return write_buffer<double_t>(buf, len, value, offset);
 }
 
-static short int readInt16(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<short>(_Buffer, _Size, _Offset, _Le);
+int8_t read_int8(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<int8_t>(buf, len, offset);
+}
+int8_t read_int8(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<int8_t>(buf, len, offset);
+}
+uint8_t read_uint8(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<uint8_t>(buf, len, offset);
+}
+uint8_t read_uint8(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<uint8_t>(buf, len, offset);
 }
 
-static short int readInt16(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<short>(_Buffer, _Size, _Offset, _Le);
+int16_t read_int16(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<int16_t>(buf, len, offset);
+}
+int16_t read_int16(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<int16_t>(buf, len, offset);
+}
+uint16_t read_uint16(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<uint16_t>(buf, len, offset);
+}
+uint16_t read_uint16(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<uint16_t>(buf, len, offset);
 }
 
-static char readInt8(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<char>(_Buffer, _Size, _Offset, _Le);
+int32_t read_int32(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<int32_t>(buf, len, offset);
+}
+int32_t read_int32(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<int32_t>(buf, len, offset);
+}
+uint32_t read_uint32(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<uint32_t>(buf, len, offset);
+}
+uint32_t read_uint32(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<uint32_t>(buf, len, offset);
 }
 
-static char readInt8(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<char>(_Buffer, _Size, _Offset, _Le);
+int64_t read_int64(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<int64_t>(buf, len, offset);
+}
+int64_t read_int64(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<int64_t>(buf, len, offset);
+}
+uint64_t read_uint64(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<uint64_t>(buf, len, offset);
+}
+uint64_t read_uint64(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<uint64_t>(buf, len, offset);
 }
 
-static unsigned int readUint32(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<unsigned int>(_Buffer, _Size, _Offset, _Le);
+float_t read_float(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<float_t>(buf, len, offset);
 }
-
-static unsigned int readUint32(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<unsigned int>(_Buffer, _Size, _Offset, _Le);
+float_t read_float(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<float_t>(buf, len, offset);
 }
-
-static unsigned short int readUint16(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<unsigned short>(_Buffer, _Size, _Offset, _Le);
+double_t read_double(const char* buf, size_t len, size_t& offset) {
+    return read_buffer<double_t>(buf, len, offset);
 }
-
-static unsigned short int readUint16(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<unsigned short>(_Buffer, _Size, _Offset, _Le);
-}
-
-static unsigned char readUint8(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<unsigned char>(_Buffer, _Size, _Offset, _Le);
-}
-
-static unsigned char readUint8(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<unsigned char>(_Buffer, _Size, _Offset, _Le);
-}
-
-static float readFloat(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<float>(_Buffer, _Size, _Offset, _Le);
-}
-
-static float readFloat(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<float>(_Buffer, _Size, _Offset, _Le);
-}
-
-static double readDouble(const char * _Buffer, const unsigned long long& _Size, unsigned long long& _Offset, bool _Le = true) {
-	return readFromBuffer<double>(_Buffer, _Size, _Offset, _Le);
-}
-
-static double readDouble(const char * _Buffer, const unsigned long long& _Size, const unsigned long long& _Offset, bool _Le = true) {
-    return readFromBuffer<double>(_Buffer, _Size, _Offset, _Le);
-}
-
-static void writeInt32(char* _Buffer, unsigned long long& _Offset, const int& _Val, bool _Le = true) {
-	return writeToBuffer<int>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeInt16(char* _Buffer, unsigned long long& _Offset, const short& _Val, bool _Le = true) {
-	return writeToBuffer<short>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeInt8(char* _Buffer, unsigned long long& _Offset, const char& _Val, bool _Le = true) {
-	return writeToBuffer<char>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeUint32(char* _Buffer, unsigned long long& _Offset, const unsigned int& _Val, bool _Le = true) {
-	return writeToBuffer<unsigned int>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeUint16(char* _Buffer, unsigned long long& _Offset, const unsigned short& _Val, bool _Le = true) {
-	return writeToBuffer<unsigned short>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeUint8(char* _Buffer, unsigned long long& _Offset, const unsigned char& _Val, bool _Le = true) {
-	return writeToBuffer<unsigned char>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeFloat(char* _Buffer, unsigned long long& _Offset, const float& _Val, bool _Le = true) {
-	return writeToBuffer<float>(_Buffer, _Offset, _Val, _Le);
-}
-
-static void writeDouble(char* _Buffer, unsigned long long& _Offset, const double& _Val, bool _Le = true) {
-	return writeToBuffer<double>(_Buffer, _Offset, _Val, _Le);
+double_t read_double(const char* buf, size_t len, const size_t offset) {
+    return read_buffer<double_t>(buf, len, offset);
 }
 
 #endif // NC_BINARY_H_
