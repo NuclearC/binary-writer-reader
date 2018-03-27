@@ -8,6 +8,12 @@
 #ifndef NC_BINARY_H_
 #define NC_BINARY_H_
 
+#ifndef  WIN32
+#include <string.h>
+typedef float float_t;
+typedef double double_t;
+#endif // ! WIN32
+
 template <typename T>
 static void write_buffer(char* buf, size_t len, T value, size_t& offset) {
     auto size = sizeof(T);
